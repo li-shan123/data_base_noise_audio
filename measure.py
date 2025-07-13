@@ -243,8 +243,9 @@ def frame_aligned_compare(test_f0, ref_f0):
     diff_hz = np.abs(padded_test - padded_ref)
     diff_cent = np.abs(test_cent - ref_cent)
     
-    voiced_mask = (padded_test > 0) & (padded_ref > 0)
+    voiced_mask = (padded_test > 0) & (padded_ref > 0)& (diff_hz < 0.2*padded_ref)
     voiced_mask2 = (padded_test > 0) & (padded_ref > 0) & (diff_hz >= 0.2*padded_ref)
+    voiced_mask3 =  (padded_test > 0) & (padded_ref > 0)
     insert_error = (padded_test > 80) & (padded_ref==0)
     deletion_error =  (padded_test == 80) & (padded_ref>0)
 
@@ -257,7 +258,7 @@ def frame_aligned_compare(test_f0, ref_f0):
         'cent_rmse': np.sqrt(np.mean(diff_cent[voiced_mask]**2)) if np.any(voiced_mask) else np.nan,
         'corr': np.corrcoef(padded_test[voiced_mask], padded_ref[voiced_mask])[0,1] if np.sum(voiced_mask) > 1 else np.nan,
         'voiced_ratio': np.mean(voiced_mask),
-        'voiced_ratio2': np.mean(voiced_mask2)/np.mean(voiced_mask),
+        'voiced_ratio2': np.mean(voiced_mask2)/np.mean(voiced_mask3),
         'insert_error': np.mean(insert_error),
         'delete_error': np.mean(deletion_error)
     }
